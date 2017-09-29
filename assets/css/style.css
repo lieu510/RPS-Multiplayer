@@ -1,0 +1,20 @@
+.player {
+    width: 160px;
+    height: 160px;
+    border: 1px solid black;
+    display: inline-block;
+    margin: 5px;
+    padding: 10px;
+}
+
+#gameStatus {
+    height: 50px;
+}
+
+#chatBox {
+    width: 330px;
+    height: 160px;
+    border: 1px solid black;
+    margin: 5px;
+    padding: 10px;
+}
