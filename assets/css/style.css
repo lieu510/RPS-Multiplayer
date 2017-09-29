@@ -1,10 +1,9 @@
 .player {
-    width: 160px;
-    height: 160px;
+    max-width: 195px;
+    height: 150px;
     border: 1px solid black;
-    display: inline-block;
-    margin: 5px;
-    padding: 10px;
+    margin: 15px;
+    padding: 5px;
 }
 
 #gameStatus {
@@ -12,9 +11,15 @@
 }
 
 #chatBox {
-    width: 330px;
+    max-width: 400px;
     height: 160px;
     border: 1px solid black;
-    margin: 5px;
-    padding: 10px;
+    padding: 5px;
+    overflow: scroll;
+    margin-bottom: 5px;
+}
+
+#inputName {
+    color: grey;
+    margin-top: 5px;
 }

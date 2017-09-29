@@ -4,37 +4,42 @@
 <head>
     <title>RPS-Multiplayer</title>
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-</head>
-
-<body>
-
-    <form id="nameForm">
-        <input id="inputName" type="text" value="Name">
-        <input id="setName" type="submit">
-    </form>
-    <div id="gameStatus"></div>
-    <div class="player">
-        <div id="player1Status"><h3>Waiting for Player 1</h3></div>
-        <div id="player1Score"></div>
-        <div id="player1Choices"></div>
-    </div>
-    <div class="player">
-        <div id="player2Status"><h3>Waiting for Player 2</h3></div>
-        <div id="player2Score"></div>
-        <div id="player2Choices"></div>
-    </div>
-    <div id="chatBox">
-
-    </div>
-    <form id="chatForm">
-        <input id="inputMsg" type="text">
-        <input id="sendMsg" type="submit">
-    </form>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
     <script src="assets/javascript/app.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
 
+<body>
+    <div class="container">
+        <form id="nameForm">
+            <input id="inputName" type="text" value="Name" onfocus="this.value=''">
+            <input id="setName" type="submit">
+        </form>
+
+        <div id="gameStatus"></div>
+
+        <div class="row">
+            <div class="player col-xs-5">
+                <div id="player1Status"><h3>Waiting for Player 1</h3></div>
+                <div id="player1Score"></div>
+                <div id="player1Choices"></div>
+            </div>
+            <div class="player col-xs-5">
+                <div id="player2Status"><h3>Waiting for Player 2</h3></div>
+                <div id="player2Score"></div>
+                <div id="player2Choices"></div>
+            </div>
+        </div>
+
+        <div id="chatBox"></div>
+        
+        <form id="chatForm">
+            <input id="inputMsg" type="text">
+            <input id="sendMsg" type="submit">
+        </form>
+    </div>
 </body>
 
 </html>

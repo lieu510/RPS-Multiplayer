@@ -46,15 +46,16 @@ $(document).ready(function () {
             $("#gameStatus").empty();
         }
     });
+    // inserts player into database
     firebase.database().ref('players').on('value', function(snapshot){
         if (snapshot.child('1').exists()){
             player1Name = snapshot.child('1').child('name').val();
             player1Wins = snapshot.child('1').child('wins').val();
             player1Losses = snapshot.child('1').child('losses').val();
-            $("#player1Status").html("<h3>" + player1Name + "</h3>");
-            $("#player1Score").html("<h3>Wins: " + player1Wins + " Losses: " + player1Losses + "</h3>");
+            $("#player1Status").html("<h4>" + player1Name + "</h4>");
+            $("#player1Score").html("<h4>Wins: " + player1Wins + " Losses: " + player1Losses + "</h4>");
         } else {
-            $("#player1Status").html("<h3>Waiting for Player 1</h3>");
+            $("#player1Status").html("<h4>Waiting for Player 1</h4>");
             $("#player1Score").empty();
             $("#player2Choices").empty();
         }
@@ -62,10 +63,10 @@ $(document).ready(function () {
             player2Name = snapshot.child('2').child('name').val();
             player2Wins = snapshot.child('2').child('wins').val();
             player2Losses = snapshot.child('2').child('losses').val();
-            $("#player2Status").html("<h3>" + player2Name + "</h3>");
-            $("#player2Score").html("<h3>Wins: " + player2Wins + " Losses: " + player2Losses + "</h3>");
+            $("#player2Status").html("<h4>" + player2Name + "</h4>");
+            $("#player2Score").html("<h4>Wins: " + player2Wins + " Losses: " + player2Losses + "</h4>");
         } else {
-            $("#player2Status").html("<h3>Waiting for Player 2</h3>");
+            $("#player2Status").html("<h4>Waiting for Player 2</h4>");
             $("#player2Score").empty();
             $("#player1Choices").empty();
         }
@@ -75,7 +76,10 @@ $(document).ready(function () {
         firebase.database().ref('players').child(userId).remove();
         firebase.database().ref().child('turn').remove();
         if (name !== undefined) {
-            firebase.database().ref('messages').push(name + " has left the game.");
+            firebase.database().ref('messages').push({
+                name: name,
+                message: "has left the game."
+            });
         }
     };
     $("#setName").on("click", function(){
@@ -89,6 +93,10 @@ $(document).ready(function () {
             wins: 0,
             losses: 0
         });
+        firebase.database().ref('messages').push({
+            name: name,
+            message: "has joined the game."
+        });
         firebase.database().ref().once('value', function(snapshot){
             if (snapshot.child('players').child('1').exists() && snapshot.child('players').child('2').exists()){
                 firebase.database().ref().update({
@@ -101,8 +109,12 @@ $(document).ready(function () {
     firebase.database().ref('turn').on('value', function(snapshot) {
         turn = snapshot.val();
         if (turn === "1") {
+            player1Choice = "";
+            player2Choice = "";
             $("#player1Choices").empty();
             $("#player2Choices").empty();
+            firebase.database().ref('players').child('1').child('choice').remove();
+            firebase.database().ref('players').child('2').child('choice').remove();
         }
         if (turn === userId){
             $("#gameStatus").html("<h2>It's your turn!</h2>");
@@ -123,8 +135,8 @@ $(document).ready(function () {
         firebase.database().ref('players').child(userId).update({
             choice: choice
         });
-        if (newTurn === "1") {
-            setTimeout(setNewTurn, 5000);
+        if (turn === "2") {
+            setTimeout(setNewTurn, 4000);
         } else {
             setNewTurn();
         }
@@ -156,34 +168,31 @@ $(document).ready(function () {
         } else if (player1Choice === "Paper" && player2Choice == "Scissors") {
             winnderid = 2;
         } 
-
         if (winnderid === 1) {
             $("#gameStatus").html("<h2>" + player1Name + " Wins!</h2>");
-            player1Wins++;
-            player2Losses++;
             firebase.database().ref('players').child('1').update({
-                wins: player1Wins
+                wins: player1Wins + 1
             });
             firebase.database().ref('players').child('2').update({
-                losses: player2Losses
+                losses: player2Losses + 1
             });
         } else if (winnderid === 2) {
             $("#gameStatus").html("<h2>" + player2Name + " Wins!</h2>");
-            player2Wins++;
-            player1Losses++;
             firebase.database().ref('players').child('2').update({
-                wins: player2Wins
+                wins: player2Wins + 1
             });
             firebase.database().ref('players').child('1').update({
-                losses: player1Losses
+                losses: player1Losses + 1
             });
         } else if (winnderid === 0) {
             $("#gameStatus").html("<h2>It's a tie!</h2>");
         }
     }
     firebase.database().ref('players').child('2').child('choice').on('value', function(snapshot) {
-        findWinner();
-        if (player1Choice !== null && player2Choice !== null) {
+        if (turn === "2") {
+            findWinner();
+        }
+        if (player1Choice && player2Choice) {
             $("#player1Choices").html("<h1>" + player1Choice + "</h1>");
             $("#player2Choices").html("<h1>" + player2Choice + "</h1>");
         }
@@ -191,16 +200,20 @@ $(document).ready(function () {
     
     $("#sendMsg").on("click", function(){
         event.preventDefault();
-        var msg = name + ": " + $("#inputMsg").val();
-        firebase.database().ref('messages').push(msg);
+        var msg = $("#inputMsg").val();
+        firebase.database().ref('messages').push({
+            name: name + ":",
+            message: msg
+        });
         $("#inputMsg").val("");
     });
 
-    firebase.database().ref('messages').on('value', function(snapshot) {
-        $("#chatBox").empty();
-        snapshot.forEach(function(message) {
-            $("#chatBox").append("<span>" + message.val() + "</span><br>");
-        });
+    firebase.database().ref('messages').on('child_added', function(snapshot) {
+        $("#chatBox").append("<span>" + snapshot.val().name + " " + snapshot.val().message + "</span><br>");
+        // $("#chatBox").empty();
+        // snapshot.forEach(function(message) {
+        //     $("#chatBox").append("<span>" + message.val() + "</span><br>");
+        // });
     });
 
 });
